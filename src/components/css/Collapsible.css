@@ -1,0 +1,46 @@
+.collapsible {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 3vw;
+    padding: 2vh;
+    background-color: var(--bg-color-2);
+    cursor: pointer;
+    user-select: none;
+}
+
+.collapsible h1 {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.collapsible h1::after {
+    content: "↓↑";
+    position: absolute;
+    right: 3vw;
+}
+
+.collapsible > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2vh;
+    width: 100%;
+}
+
+.collapsible a {
+    text-decoration: none;
+    cursor: pointer;
+    color: var(--color);
+    font-size: 1.3rem;
+}
+
+.collapsible a:hover {
+    transform: scale(115%);
+    transition: transform 1s;
+}

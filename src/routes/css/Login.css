@@ -1,0 +1,58 @@
+form {
+    --field-width: 60vw;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: var(--bg-color-1);
+}
+
+form label {
+    font-size: 2rem;
+}
+
+form input,
+form button {
+    width: var(--field-width);
+    border-radius: 2rem;
+    padding: .8rem;
+    font-size: 1rem;
+    padding: .8rem;
+    outline: none;
+}
+
+form label,
+form button {
+    margin-top: 2rem;
+}
+
+form input {
+    border: 2px solid var(--btn-color);
+    text-align: center;
+    font-weight: bold;
+}
+
+form input:focus,
+form button:focus {
+    background-color: var(--bg-color-3);
+}
+
+#logo {
+    height: 20vh;
+    width: 20vh;
+    fill: var(--btn-color);
+}
+
+.error {
+    font-weight: bold;
+    color: rgb(209, 105, 105);
+    font-size: 1.1rem;
+}
+
+@media screen and (min-width: 600px) {
+    form {
+        --field-width: 20vw;
+    }
+}
