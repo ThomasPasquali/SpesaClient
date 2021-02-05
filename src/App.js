@@ -10,16 +10,24 @@ export const SessionContext = React.createContext()
 
 function App() {
 
-  const [username, setUsername] = useState('Thomas')
+  const u = ['Thomas', 'Berga', 'Stefano']
+  const [username, setUsername] = useState(u[Math.floor(Math.random() * u.length)])
+  const apiInet = '127.0.0.1'
 
   return (
 
     <Router>
       <Switch>
         <SessionContext.Provider value={{
-          proxy: 'http://127.0.0.1:1234',
+          apiInet,
+          proxy: `http://${apiInet}:1234`,
           username,
-          setUsername
+          setUsername,
+          groups: [1, 2],
+          events: {
+            port: 1235,
+            path: '/'
+          }
         }}>
           <Route exact path="/login" component={Login} />
           <Route exact path="/home" component={Home} />

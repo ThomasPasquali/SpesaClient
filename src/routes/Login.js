@@ -4,18 +4,18 @@ import { SessionContext } from '../App'
 import { Formik } from 'formik'
 import './css/Login.css'
 import axios from 'axios'
-import cookies from 'axios-cookiejar-support'
-import tough from 'tough-cookie'
+//import cookies from 'axios-cookiejar-support'
+//import tough from 'tough-cookie'
 
 export default function Login() {
 
     const session = useContext(SessionContext)
     const history = useHistory()
 
-    cookies(axios)
+    //cookies(axios)
     axios.defaults.baseURL = session.proxy
-    axios.defaults.jar = new tough.CookieJar()
-    axios.defaults.withCredentials = true
+    //axios.defaults.jar = new tough.CookieJar()
+    //axios.defaults.withCredentials = true
 
     return (
         <Formik
