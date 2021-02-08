@@ -189,7 +189,7 @@ export default function Spesa() {
                         </DialogContent>
                         <DialogActions>
                             <Button color="primary" onClick={closeDialog} >Annulla</Button>
-                            <Button color="primary" onClick={addItemToList}>AGGIUNGI</Button>
+                            <Button color="primary" variant="outlined" onClick={addItemToList}>AGGIUNGI</Button>
                         </DialogActions>
                     </Dialog>
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Root() {
+export default function Users() {
     return (
         <div>
             

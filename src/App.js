@@ -1,8 +1,9 @@
 import './App.css'
-import Root from './routes/Root'
 import Login from './routes/Login'
 import Home from './routes/Home'
 import Shop from './routes/Shop'
+import Items from './routes/Items'
+import Users from './routes/Users'
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
@@ -23,7 +24,6 @@ function App() {
           proxy: `http://${apiInet}:1234`,
           username,
           setUsername,
-          groups: [1, 2],
           events: {
             port: 1235,
             path: '/'
@@ -31,8 +31,10 @@ function App() {
         }}>
           <Route exact path="/login" component={Login} />
           <Route exact path="/home" component={Home} />
-          <Route path="/shop/:id" component={Shop} />
-          <Route path="/" component={Root} />
+          <Route exact path="/edit/items" component={Items} />
+          <Route exact path="/edit/users" component={Users} />
+          <Route exact path="/shop/:id" component={Shop} />
+          <Route exact path="/" component={username?Home:Login} />
         </SessionContext.Provider>
       </Switch>
     </Router>
