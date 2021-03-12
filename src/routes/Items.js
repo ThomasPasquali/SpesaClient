@@ -1,4 +1,3 @@
-import axios from 'axios'
 import React, { useEffect, useState, useContext, useRef } from 'react'
 import { AgGridColumn, AgGridReact } from 'ag-grid-react'
 import { SessionContext } from '../App'
@@ -23,7 +22,7 @@ import Footer from '../components/Footer'
 
 export default function Items() {
 
-    const session = useContext(SessionContext)
+    const { API, username } = useContext(SessionContext)
     const [shopsItems, setShopsItems] = useState([])
     const gridApis = useRef([])
     const selectedItem = useRef(null)
@@ -35,24 +34,24 @@ export default function Items() {
     const handleError = (e, message) => console.log(message, e)
 
     useEffect(() => {
-        axios.get(`/user_shops?username=${session.username}`).then(async res => {
+        API.current.get(`/user_shops?username=${username}`).then(async res => {
             let shops = []
             for (let i = 0; i < res.data.length; i++) {
                 const shop = res.data[i];
-                const items = await axios.get(`/shop_items?shopid=${shop.id}`)
+                const items = await API.current.get(`/shop_items?shopid=${shop.id}`)
                 shop.items = items.data
                 shops[shop.id] = shop
             }
             setShopsItems(shops)
         }).catch((e => handleError(e, 'Error fetching shops')))
-    }, [session.username])
+    }, [username, API])
 
     const gridReady = (api, shopid) => {
         api.sizeColumnsToFit()
         gridApis.current[shopid] = api
     }
 
-    const cellUpdate = item => axios.put('/item', item.data)
+    const cellUpdate = item => API.current.put('/item', item.data)
 
     const cellSelected = item => selectedItem.current = item.data
 
@@ -67,7 +66,7 @@ export default function Items() {
 
     const addItem = () => {
         let item = { id: -1, nome: newName, note: newNotes, prezzo: newPrice, supermercato: newShop }
-        axios.put('/item', item).then(res => {
+        API.current.put('/item', item).then(res => {
             setShopsItems(shops => {
                 shops[res.data.supermercato].items.push(res.data)
                 gridApis.current[res.data.supermercato].applyTransaction({
@@ -83,7 +82,7 @@ export default function Items() {
     const removeItem = () => {
         const itemid = selectedItem.current.id
         const shopid = selectedItem.current.supermercato
-        axios.delete(`/item?itemid=${itemid}`).then(() => {
+        API.current.delete(`/item?itemid=${itemid}`).then(() => {
             setShopsItems(shops => {
                 shops[shopid].items = shops[shopid].items.filter(item => item.id !== itemid)
                 gridApis.current[shopid].applyTransaction({

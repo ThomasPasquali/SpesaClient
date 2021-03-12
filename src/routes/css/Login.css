@@ -1,45 +1,50 @@
-form {
+form.login {
     --field-width: 60vw;
     width: 100vw;
     height: 100vh;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     background-color: var(--bg-color-1);
 }
 
-form label {
+form.login label {
     font-size: 2rem;
+    text-align: center;
 }
 
-form input,
-form button {
+form.login input,
+form.login button {
     width: var(--field-width);
     border-radius: 2rem;
     padding: .8rem;
     font-size: 1rem;
     padding: .8rem;
     outline: none;
+    text-align: center;
 }
 
-form label,
-form button {
-    margin-top: 2rem;
+form.login label,
+form.login button {
+    margin-top: 3rem;
+    width: var(--field-width);
 }
 
-form input {
+form.login > input {
     border: 2px solid var(--btn-color);
     text-align: center;
     font-weight: bold;
+    margin: 0;
 }
 
-form input:focus,
-form button:focus {
-    background-color: var(--bg-color-3);
+form.login input:focus,
+form.login button:focus {
+    border-bottom: solid 5px var(--secondary);
 }
 
 #logo {
+    margin: 5vh;
     height: 20vh;
     width: 20vh;
     fill: var(--btn-color);
@@ -52,7 +57,7 @@ form button:focus {
 }
 
 @media screen and (min-width: 600px) {
-    form {
+    form.login {
         --field-width: 20vw;
     }
 }

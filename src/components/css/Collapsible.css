@@ -5,7 +5,7 @@
     align-items: center;
     margin: 3vw;
     padding: 2vh;
-    background-color: var(--bg-color-2);
+    background-color: var(--light);
     cursor: pointer;
     user-select: none;
 }
@@ -16,12 +16,15 @@
     padding: 0;
     width: 100%;
     text-align: center;
+    font-size: 1.8rem;
 }
 
 .collapsible h1::after {
     content: "↓↑";
     position: absolute;
-    right: 3vw;
+    right: 1.5vw;
+    font-size: 1.3rem;
+    padding-top: .3rem;
 }
 
 .collapsible > div {
@@ -43,4 +46,21 @@
 .collapsible a:hover {
     transform: scale(115%);
     transition: transform 1s;
+}
+
+.collapsible.small {
+    margin: 2vh;
+    padding: 10px;
+    border: 1px dashed rgba(21,21,21,.3);
+}
+
+.collapsible.small h1 {
+    font-size: 1rem;
+    white-space: break-spaces;
+    color: var(--s-light);
+}
+    
+.collapsible.small h1::after {
+    font-size: .8rem;
+    padding-top: 0;
 }

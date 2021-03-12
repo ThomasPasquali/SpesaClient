@@ -2,35 +2,61 @@ import React, { useState, useEffect, useContext } from 'react'
 import Navbar from '../components/Navbar'
 import { SessionContext } from '../App'
 import Collapsible from '../components/Collapsible'
-import axios from 'axios'
-//import cookies from 'axios-cookiejar-support'
-//import tough from 'tough-cookie'
 import { Link } from 'react-router-dom'
+import { Button } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles';
+
+import './css/Home.css'
+
+const useStyles = makeStyles({
+  root: {
+    color: 'var(--color)',
+    fontWeight: 'bold',
+    borderColor: 'var(--color)'
+  },
+})
 
 export default function Home() {
 
-    const session = useContext(SessionContext)
+    const classes = useStyles()
+    const btnProps = {
+        fullWidth: true,
+        variant: 'outlined',
+        className: classes.root,
+    }
+
+    const { username, API } = useContext(SessionContext)
     const [lists, setLists] = useState([])
-
-    //cookies(axios)
-    axios.defaults.baseURL = session.proxy
-    //axios.defaults.jar = new tough.CookieJar()
-    //axios.defaults.withCredentials = true/**/
-
+    
     useEffect(() => {
-        axios.get('/user_lists?username='+session.username).then(res => { if(res) setLists(res.data??[]) }).catch((error => console.log('Error fetching lists', error??'')))
-    }, [session.username])
+        API.current.get('/user_lists?username='+username)
+            .then(res => { if(res) setLists(res.data??[]) })
+            .catch((error => console.log('Error fetching lists', error??'')))
+    }, [API, username])
 
     return (
         <>
             <Navbar />
-            <Collapsible header="Liste attive" isopen={false}>
-                { lists.map(list => <Link to={`/shop/${list.id}`} key={list.id}>{list.nome}</Link>) }
+            <Collapsible header="Operazioni" isopen={true} className='list'>
+                <Link to="/create/list">
+                    <Button {...btnProps} >Nuova lista</Button>
+                </Link>
+                <Link to="/edit/items" className={classes.root}>
+                    <Button {...btnProps} >Gestione oggetti e supermercati</Button>
+                </Link>
+                <Link to="/edit/users" className={classes.root}>
+                    <Button {...btnProps} >Gestione utenze</Button>
+                </Link>
             </Collapsible>
-            <Collapsible header="Operazioni">
-                <Link to="/crete/list">Crea una nuova lista</Link>
-                <Link to="/edit/items">Gestione oggetti e supermercati</Link>
-                <Link to="/edit/users">Gestione utenze</Link>
+            <Collapsible header="Liste attive" className='list'>
+                { lists.length === 0 && <p>Nessuna lista attiva</p> }
+                { 
+                    lists.map(list => 
+                        <Link className={classes.root} to={`/shop/${list.id}`} key={list.id}>
+                            <Button {...btnProps} >{list.nome}</Button>
+                        </Link>
+                    )
+                }
             </Collapsible>
         </>
     )

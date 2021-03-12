@@ -1,25 +1,29 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
 :root {
     --nav-height: 8vh;
 
     --color: #000000;
     --color-h: #ffffff;
 
-    --bg-color: #333333;
-    --bg-color-1: #0c4ea5;
-    --bg-color-2: #517cc3;
-    --bg-color-3: #84abff;
-    --btn-color: #ffb917;
+    --primary: #0d46a0;
+    --light: #5471d2;
+    --dark: #002071;
+    --secondary: #ffc107;
+    --s-light: #fff350;
+    --s-dark: #c79100;
 }
 
 * {
-    font-family: 'Alegreya', serif;
+    /*montblanc*/
+    font-family: 'Raleway', sans-serif;
 }
 
 body {
     margin: 0;
     padding: 0;
-    background-color: var(--bg-color);
+    background-color: var(--primary);
     width: 100vw;
     overflow-x: hidden;
 }
@@ -31,8 +35,8 @@ h1 {
 
 
 button {
-    background-color: var(--btn-color);
-    color: var(--bg-color-1);
+    background-color: var(--secondary);
+    color: var(--color);
     text-decoration: none;
     padding: .4rem;
     border: none;
@@ -49,13 +53,13 @@ button {
 body::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-	background-color: var(--bg-color);
+	background-color: var(--primary);
 	border-radius: 10px;
 }
 
 body::-webkit-scrollbar {
     width: 10px;
-	background-color: var(--bg-color);
+	background-color: var(--primary);
 }
 
 body::-webkit-scrollbar-thumb {
