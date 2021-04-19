@@ -44,8 +44,11 @@ export default function Home() {
                 <Link to="/edit/items" className={classes.root}>
                     <Button {...btnProps} >Gestione oggetti e supermercati</Button>
                 </Link>
+                <Link to="/edit/recipes" className={classes.root}>
+                    <Button {...btnProps} >Gestione ricette</Button>
+                </Link>
                 <Link to="/edit/users" className={classes.root}>
-                    <Button {...btnProps} >Gestione utenze</Button>
+                    <Button {...btnProps} >Gestione utenze WIP</Button>
                 </Link>
             </Collapsible>
             <Collapsible header="Liste attive" className='list'>

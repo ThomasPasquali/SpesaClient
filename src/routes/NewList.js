@@ -1,4 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useMemo } from 'react'
+import { useHistory } from "react-router-dom";
 
 import Navbar from '../components/Navbar'
 import { SessionContext } from '../App'
@@ -14,6 +15,7 @@ import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart'
 import DoneOutlineIcon from '@material-ui/icons/DoneOutline'
 import { makeStyles } from '@material-ui/core/styles'
 
+import Lib from '../Lib'
 import './css/ItemsAndRecipes.css'
 
 const useStyles = makeStyles({
@@ -31,6 +33,7 @@ const useStyles = makeStyles({
 
 export default function NewList() {
 
+    const history = useHistory()
     const classes = useStyles()
     const { API, username } = useContext(SessionContext)
     const [addingItem, setAddingItem] = useState(false)
@@ -40,7 +43,7 @@ export default function NewList() {
     const [shops, setShops] = useState({})
     const [name, setName] = useState('')
 
-    const [selectedGroups, setSelectedGroups] = useState([])
+    const [selectedGroup, setSelectedGroup] = useState(null)
     const [selectedShop, setSelectedShop] = useState(null)
     const [selectedItems, setSelectedItems] = useState([])
     const [selectedRecipes, setSelectedRecipes] = useState([])
@@ -49,34 +52,60 @@ export default function NewList() {
     const [itemToAddQty, setItemToAddQty] = useState(1)
     const [recipeToAdd, setRecipeToAdd] = useState(null)
 
-    const removeGroup = group => {
-        setGroups(groups => [...groups, group])
-        setSelectedGroups(groups => groups.filter(gr => gr.id !== group.id))
-    }
-    const selectGroup = group => {
-        setGroups(groups => groups.filter(gr => gr.id !== group.id))
-        setSelectedGroups(groups => [...groups, group])
-    }
+    const lib = useMemo(_ => new Lib(API, username), [API, username])
+    useEffect(_ => {
+        const fetch = async _ => {
+            setShops(await lib.getShops())
+            setGroups(await lib.getGroups())
+        }
+        fetch()
+    }, [lib])
 
     const canSubmit = _ => 
         canContinue()
         && (selectedItems.length > 0 || selectedRecipes.length > 0) 
         
     const canContinue = _ =>
-        selectedGroups.length > 0 
+        selectedGroup != null
         && selectedShop
         && name
 
     const nextStep = _ => { if(canContinue()) setFirstStep(false) }
 
-    const handleSubmit = a => console.log(a)
+    const handleSubmit = _ => {
+        let items = [...selectedItems], i
+        for (const recipe of selectedRecipes)
+            for (const item of recipe.items) {
+                let qta = parseInt(item.quantita) * parseInt(recipe.quantita??1)
+                if ((i = items.findIndex(it => it.id === item.id)) >= 0)
+                    items[i].quantita = parseInt(items[i].quantita) + parseInt(qta)
+                else
+                    items.push(item)
+            }
+        API.current.put(`/list`, {username, listname: name, group: selectedGroup, shopid: selectedShop, items}).then(res => {
+            if(res.status === 200)
+                history.push('/shop/'+res.data.listid)
+            else
+                console.log(res);
+        }).catch(err => {
+            alert('Errore')
+            console.log(err)
+        })
+    }
 
     const openDialog = _ => { if(selectedShop) setAddingItem(true) }
     const closeDialog = _ => setAddingItem(false)
 
     const addItem = _ => {
         if(recipeToAdd) {
-            setSelectedRecipes(recipes => [...recipes, recipeToAdd])
+            setSelectedRecipes(recipes => {
+                let i
+                if((i = selectedRecipes.findIndex(r => r.id === recipeToAdd.id)) >= 0) {
+                    recipes[i].quantita = (recipes[i].quantita??1) + 1
+                    return recipes
+                }
+                return [...recipes, recipeToAdd]
+            })
             setRecipeToAdd(null)
         }
         if(itemToAdd && itemToAddQty > 0) {
@@ -95,53 +124,21 @@ export default function NewList() {
         }
     }
 
-    const removeItem = item => {
-        setSelectedItems(items => items.filter(i => i.id !== item.id))
-    }
+    const removeItem = item => setSelectedItems(items => items.filter(i => i.id !== item.id))
+    
+    const removeRecipe = recipe => setSelectedRecipes(recipes => {
+        recipes = [...recipes]
+        let i = recipes.indexOf(recipe)
+        recipes[i].quantita--
+        return recipes[i].quantita > 0 ? recipes : recipes.filter(r => r.id !== recipe.id)
+    })
 
-    const getItemDescription = item => (
-        <div className="item" key={item.id}>
-            <p>{item.nome}{item.acquirente ? ` (${item.acquirente})` : ''}</p>
-            <p>{item.note && `(${item.note})`}</p>
-            <p>{item.quantita} pz.</p>
-            <p onClick={() => removeItem(item)}>🗑️</p>
-        </div>
-    )
-
-    const getRecipeDescription = recipe => {
-        return (
-            <Collapsible header={<><p onClick={() => removeItem(1)}>🗑️</p><p>{recipe.nome+(recipe.descrizione?`\n(${recipe.descrizione})`:'')}</p></>} isopen={false} className="recipe small" key={recipe.id}>
-                { recipe.items.map(getItemDescription) }
-            </Collapsible>
-       )
-    }
-
-    useEffect(() => {
-        API.current.get(`/groups?username=${username}`).then(res => { 
-            setGroups(Array.isArray(res.data)?res.data:[res.data])
-            console.log('Groups fetched!')
-        })
-        API.current.get(`/user_shops?username=${username}`).then(async res => {
-            let shops = {}
-            for (let i = 0; i < res.data.length; i++) {
-                const shop = res.data[i]
-
-                const items = await API.current.get(`/shop_items?shopid=${shop.id}`)
-                shop.items = items.data
-
-                const recipes = (await API.current.get(`/shop_user_recipes?shopid=${shop.id}&username=${username}`)).data
-                for (let i = 0; i < recipes.length; i++) {
-                    const recipe = recipes[i]
-                    const recipeItems = (await API.current.get(`/recipe_items?recipeid=${recipe.id}`)).data
-                    recipe.items = recipeItems
-                }
-                shop.recipes = recipes
-
-                shops[shop.id] = shop
-            }
-            setShops(shops)
-        })
-    }, [API, username])
+    const removeRecipeItem = (recipe, item) => setSelectedRecipes(recipes => {
+        recipes = [...recipes]
+        let i = recipes.indexOf(recipe)
+        recipes[i].items = recipes[i].items.filter(itm => itm.id !== item.id)
+        return recipes
+    })
     
     return (
         <>
@@ -162,25 +159,23 @@ export default function NewList() {
 
                         <Collapsible header="Gruppi" isopen={true}>
                             <div id="groups">
-                                {
-                                    selectedGroups.map(group => 
-                                        <Chip
-                                            className={classes.chips}
-                                            key={group.id}
-                                            label={ group.nome }
-                                            onClick={_ => removeGroup(group)}
-                                            variant="outlined"
-                                            icon={<CheckCircleIcon className={classes.chipIcon} />}
-                                        />
-                                    )
+                                {   selectedGroup &&
+                                    <Chip
+                                        className={classes.chips}
+                                        key={selectedGroup.id}
+                                        label={ selectedGroup.nome }
+                                        variant="outlined"
+                                        icon={<CheckCircleIcon className={classes.chipIcon} />}
+                                    />
                                 }
                                 { 
                                     groups.map(group => 
+                                        (selectedGroup == null || group.id !== selectedGroup.id) &&
                                         <Chip
                                             className={classes.chips}
                                             key={group.id}
                                             label={ group.nome }
-                                            onClick={_ => selectGroup(group)}
+                                            onClick={_ => setSelectedGroup(group)}
                                             variant="outlined"
                                         />
                                     )
@@ -193,11 +188,11 @@ export default function NewList() {
                     <>
                         <Collapsible header="Oggetti" isopen={true}>
                             { selectedItems.length <= 0 && <p>Nessun oggetto</p> }
-                            { selectedItems.map(getItemDescription) }
+                            { selectedItems.map(item => lib.getItemDescription(item, null, null, removeItem)) }
                         </Collapsible>
                         <Collapsible header="Ricette" isopen={true}>
                             { selectedRecipes.length <= 0 && <p>Nessuna ricetta</p> }
-                            { selectedRecipes.map(getRecipeDescription) }
+                            { selectedRecipes.map(recipe => lib.getRecipeDescription(recipe, {dRecipe: removeRecipe, dRecipeItem: removeRecipeItem}, {})) }
                         </Collapsible>
                     </>
                 )}
@@ -224,7 +219,7 @@ export default function NewList() {
                         value={recipeToAdd}
                         options={
                             shops[selectedShop] ? 
-                                shops[selectedShop].recipes.filter(recipe => !selectedRecipes.includes(recipe))
+                                shops[selectedShop].recipes//.filter(recipe => !selectedRecipes.includes(recipe))
                                 : []}
                         onChange={(e, val) => setRecipeToAdd(val)}
                         getOptionLabel={recipe => recipe?recipe.nome:''}

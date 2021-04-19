@@ -1,9 +1,10 @@
-import "./App.css";
-import Login from "./routes/Login";
-import Home from "./routes/Home";
-import Shop from "./routes/Shop";
-import Items from "./routes/Items";
-import Users from "./routes/Users";
+import "./App.css"
+import Login from "./routes/Login"
+import Home from "./routes/Home"
+import Shop from "./routes/Shop"
+import Items from "./routes/Items"
+import Recipes from "./routes/Recipes"
+import Users from "./routes/Users"
 import NewList from './routes/NewList'
 import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -92,6 +93,7 @@ function App() {
             <>
               <Route exact path="/edit/items" component={Items} />
               <Route exact path="/edit/users" component={Users} />
+              <Route exact path="/edit/recipes" component={Recipes} />
               <Route exact path="/shop/:id" component={Shop} />
               <Route exact path="/create/list" component={NewList} />
               <Route exact path="/" component={Home} />

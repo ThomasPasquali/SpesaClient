@@ -1,6 +1,10 @@
+body {
+    padding-bottom: 5rem;
+}
+
 footer {
     width: 100vw;
-    position: sticky;
+    position: fixed;
     bottom: 0;
     display: flex;
     flex-direction: row;
