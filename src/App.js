@@ -9,16 +9,19 @@ import NewList from './routes/NewList'
 import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import axios from "axios";
+import ini from "./ini.json"
 
 export const SessionContext = React.createContext();
 
 function App() {
-  const API_INET = "127.0.0.1"
-  const API_PORT = 1234
-  const API_EVENTS_PORT = 1235
-  const API_EVENTS_PATH = '/'
-  const API_AUTH_PORT = 1236
-  const API_MAX_FAILS = 5
+  const {
+    API_AUTH_PORT,
+    API_EVENTS_PATH,
+    API_EVENTS_PORT,
+    API_INET,
+    API_MAX_FAILS,
+    API_PORT
+  } = ini
   let apiFails = 0
 
   //const u = ['Thomas', 'Berga', 'Stefano']

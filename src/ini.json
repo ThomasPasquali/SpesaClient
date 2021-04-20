@@ -1,0 +1,8 @@
+{
+   "API_INET": "127.0.0.1",
+   "API_PORT": 1234,
+   "API_EVENTS_PORT": 1235,
+   "API_EVENTS_PATH": "/",
+   "API_AUTH_PORT": 1236,
+   "API_MAX_FAILS": 5
+}
