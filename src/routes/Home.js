@@ -30,7 +30,7 @@ export default function Home() {
     
     useEffect(() => {
         API.current.get('/user_lists?username='+username)
-            .then(res => { if(res) setLists(res.data??[]) })
+            .then(res => { if(res) setLists(res.data ? ([].concat(res.data)) : [] )})
             .catch((error => console.log('Error fetching lists', error??'')))
     }, [API, username])
 

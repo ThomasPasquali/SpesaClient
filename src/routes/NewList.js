@@ -185,7 +185,7 @@ export default function NewList() {
                     </>
                 )}
                 { !firstStep && (
-                    <>
+                    <div id="mainContainer">
                         <Collapsible header="Oggetti" isopen={true}>
                             { selectedItems.length <= 0 && <p>Nessun oggetto</p> }
                             { selectedItems.map(item => lib.getItemDescription(item, null, null, removeItem)) }
@@ -194,7 +194,7 @@ export default function NewList() {
                             { selectedRecipes.length <= 0 && <p>Nessuna ricetta</p> }
                             { selectedRecipes.map(recipe => lib.getRecipeDescription(recipe, {dRecipe: removeRecipe, dRecipeItem: removeRecipeItem}, {})) }
                         </Collapsible>
-                    </>
+                    </div>
                 )}
             </form>
 
